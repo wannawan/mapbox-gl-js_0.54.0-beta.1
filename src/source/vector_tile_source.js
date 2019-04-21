@@ -16,7 +16,19 @@ import type Dispatcher from '../util/dispatcher';
 import type Tile from './tile';
 import type {Callback} from '../types/callback';
 import type {Cancelable} from '../types/cancelable';
-import type {VectorSourceSpecification} from '../style-spec/types';
+import type {VectorSourceSpecification, VectorSourceRequestSpecification} from '../style-spec/types';
+
+class RequestData {
+     dataset: ?string;
+
+     constructor(option: VectorSourceRequestSpecification) {
+        this.dataset = option.dataset || '';
+     }
+
+     serializeToObject() {
+         return {"dataset": this.dataset};
+     }
+}
 
 class VectorTileSource extends Evented implements Source {
     type: 'vector';
@@ -26,6 +38,7 @@ class VectorTileSource extends Evented implements Source {
     url: string;
     scheme: string;
     tileSize: number;
+    requestdata: ?RequestData;
 
     _options: VectorSourceSpecification;
     _collectResourceTiming: boolean;
@@ -50,6 +63,7 @@ class VectorTileSource extends Evented implements Source {
         this.tileSize = 512;
         this.reparseOverscaled = true;
         this.isTileClipped = true;
+        this.requestdata = options.requestdata ? new RequestData(options.requestdata) : null;
 
         extend(this, pick(options, ['url', 'scheme', 'tileSize']));
         this._options = extend({ type: 'vector' }, options);
@@ -118,6 +132,9 @@ class VectorTileSource extends Evented implements Source {
             pixelRatio: browser.devicePixelRatio,
             showCollisionBoxes: this.map.showCollisionBoxes,
         };
+        if (this.requestdata) {
+            params['requestData'] = this.requestdata.serializeToObject();
+        }
         params.request.collectResourceTiming = this._collectResourceTiming;
 
         if (tile.workerID === undefined || tile.state === 'expired') {
