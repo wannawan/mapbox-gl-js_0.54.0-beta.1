@@ -84,7 +84,12 @@ export type VectorSourceSpecification = {
     "scheme"?: "xyz" | "tms",
     "minzoom"?: number,
     "maxzoom"?: number,
-    "attribution"?: string
+    "attribution"?: string,
+    "requestdata"?: VectorSourceRequestSpecification
+}
+
+export type VectorSourceRequestSpecification = {
+    "dataset"?: string
 }
 
 export type RasterSourceSpecification = {
