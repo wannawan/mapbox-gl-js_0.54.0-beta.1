@@ -133,7 +133,11 @@ class VectorTileSource extends Evented implements Source {
             showCollisionBoxes: this.map.showCollisionBoxes,
         };
         if (this.requestdata) {
-            params['requestData'] = this.requestdata.serializeToObject();
+            params.request['method'] = "POST";
+            params.request.body = JSON.stringify(this.requestdata.serializeToObject());
+            params.request.headers = {
+                'Content-Type': 'application/json'
+            };
         }
         params.request.collectResourceTiming = this._collectResourceTiming;
 
