@@ -1,6 +1,7 @@
 // @flow
 
 import { FillLayoutArray } from '../array_types';
+import libtess from 'libtess/libtess.debug.js'
 
 import { members as layoutAttributes } from './fill_attributes';
 import SegmentVector from '../segment';
@@ -185,7 +186,82 @@ class FillBucket implements Bucket {
                 lineSegment.primitiveLength += ring.length;
             }
 
-            const indices = earcut(flattened, holeIndices);
+            //let  indices = earcut(flattened, holeIndices);
+
+            const vertexCallback = (data, polyVertArray)  => {
+                polyVertArray[polyVertArray.length] = data[0];
+                polyVertArray[polyVertArray.length] = data[1];
+            };
+
+            const begincallback = (type) => {
+                if (type !== libtess.primitiveType.GL_TRIANGLES) {
+                    console.log('expected TRIANGLES but got type: ' + type);
+                }
+            };
+
+            const errorcallback = (errno)  => {
+                console.log('error callback');
+                console.log('error number: ' + errno);
+            };
+
+            const combinecallback = (coords, data, weight) => {
+                //console.log('combine callback');
+                return [coords[0], coords[1], coords[2]];
+            };
+
+            const edgeCallback = (flag) =>  {
+                // don't really care about the flag, but need no-strip/no-fan behavior
+                // console.log('edge flag: ' + flag);
+            };
+
+            let contours = [],
+                point_map = {},
+                point_count = 0,
+                tessy = new libtess.GluTesselator(),
+                triangleVerts = [],
+                new_indices = [];
+
+            polygon.map((poly) => {
+                let new_poly = [];
+                const poly_len = poly.length;
+                poly.map((point, index) =>{
+                    new_poly.push(point.x);
+                    new_poly.push(point.y);
+                    point_map[point.x*8192 + point.y] = point_count;
+                    point_count +=1;
+                });
+                contours.push(new_poly);
+            });
+
+            tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
+            tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
+            tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
+            tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
+            tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
+
+            tessy.gluTessNormal(0, 0, 1);
+
+            tessy.gluTessBeginPolygon(triangleVerts);
+
+            for (var i = 0; i < contours.length; i++) {
+                tessy.gluTessBeginContour();
+                var contour = contours[i];
+                for (var j = 0; j < contour.length; j += 2) {
+                    var coords = [contour[j], contour[j + 1], 0];
+                    tessy.gluTessVertex(coords, coords);
+                }
+                tessy.gluTessEndContour();
+            }
+            tessy.gluTessEndPolygon();
+
+            for (let i=0; i<triangleVerts.length; i=i+2) {
+                let map_index = triangleVerts[i]*8192+triangleVerts[i+1];
+                let p_i =point_map[map_index];
+                new_indices.push(p_i);
+            }
+
+             let indices = new_indices;
+
             assert(indices.length % 3 === 0);
 
             for (let i = 0; i < indices.length; i += 3) {
@@ -199,6 +275,46 @@ class FillBucket implements Bucket {
             triangleSegment.primitiveLength += indices.length / 3;
         }
         this.programConfigurations.populatePaintArrays(this.layoutVertexArray.length, feature, index, imagePositions);
+    }
+
+    xxx () {
+                    // let combined_polygons = [];
+            // for (let p in polygon) {
+            //     combined_polygons = combined_polygons.concat(polygon[p]);
+            // }
+            //
+            // console.log('combined_polygons', combined_polygons)
+            // let polygons = [];
+            // for (let i = 0; i < indices.length; i = i+3) {
+            //     let indice1 = indices[i];
+            //     let indice2 = indices[i + 1];
+            //     let indice3 = indices[i + 2];
+            //
+            //     let poly= [];
+            //     poly.push(combined_polygons[indice1])
+            //     poly.push(combined_polygons[indice2])
+            //     poly.push(combined_polygons[indice3])
+            //     polygons.push(poly)
+            // }
+            // console.log("new polygon", polygons);
+            // let st_polygons = [];
+            // //st_polygons.push('(8192 0, 8192 8192, 0 8192, 0 0, 8192 0)')
+            // for (let i in polygons){
+            //     let poly = polygons[i];
+            //     let st_polygon = [];
+            //     //console.log("polygon", polygon)
+            //     for (let j in poly) {
+            //         let point = poly[j];
+            //        // console.log('point', point)
+            //         st_polygon.push(point.x + ' ' + point.y)
+            //     }
+            //     st_polygon.push(poly[0].x + ' ' + poly[0].y)
+            //
+            //     st_polygons.push('('+st_polygon.join(', ')+')')
+            // }
+            //
+            // console.log(st_polygons.join(', '));
+
     }
 }
 
