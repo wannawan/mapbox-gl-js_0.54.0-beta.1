@@ -720,6 +720,10 @@ class Style extends Evented {
         return this._layers[id];
     }
 
+    getLayerIds(): [string]{
+        return Object.keys(this._layers);
+    }
+
     setLayerZoomRange(layerId: string, minzoom: ?number, maxzoom: ?number) {
         this._checkLoaded();
 

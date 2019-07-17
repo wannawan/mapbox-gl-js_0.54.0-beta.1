@@ -1326,6 +1326,10 @@ class Map extends Camera {
         return this.style.getLayer(id);
     }
 
+    getLayerIds() {
+        return this.style.getLayerIds();
+    }
+
     /**
      * Sets the filter for the specified style layer.
      *
