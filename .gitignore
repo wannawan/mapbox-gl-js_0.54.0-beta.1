@@ -1,6 +1,9 @@
 /rollup/build/
 /dist/
 *.es.js
+/docs/components/api.json
+/docs/pages/dist/
+/docs/img/dist/
 *.js.map
 node_modules
 package-lock.json
