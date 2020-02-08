@@ -128,7 +128,8 @@ export type GeoJSONSourceSpecification = {|
     "clusterMaxZoom"?: number,
     "clusterProperties"?: mixed,
     "lineMetrics"?: boolean,
-    "generateId"?: boolean
+    "generateId"?: boolean,
+    "jsondata"?: string,
 |}
 
 export type VideoSourceSpecification = {|
