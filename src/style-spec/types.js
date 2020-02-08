@@ -134,7 +134,8 @@ export type GeoJSONSourceSpecification = {|
     "clusterProperties"?: mixed,
     "lineMetrics"?: boolean,
     "generateId"?: boolean,
-    "promoteId"?: PromoteIdSpecification
+    "promoteId"?: PromoteIdSpecification,
+    "jsondata"?: string,
 |}
 
 export type VideoSourceSpecification = {|
