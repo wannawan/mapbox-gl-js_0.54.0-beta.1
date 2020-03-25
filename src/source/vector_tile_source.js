@@ -28,7 +28,7 @@ class RequestData {
      }
 
      serializeToObject() {
-         return {"dataset": this.dataset};
+         return {"dataset": this.dataset, "otherdata": this.otherdata};
      }
 }
 
