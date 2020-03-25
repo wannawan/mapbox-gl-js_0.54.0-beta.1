@@ -20,9 +20,11 @@ import type {VectorSourceSpecification, VectorSourceRequestSpecification} from '
 
 class RequestData {
      dataset: ?string;
+     otherdata: ?string;
 
      constructor(option: VectorSourceRequestSpecification) {
         this.dataset = option.dataset || '';
+        this.otherdata = option.otherdata || '';
      }
 
      serializeToObject() {

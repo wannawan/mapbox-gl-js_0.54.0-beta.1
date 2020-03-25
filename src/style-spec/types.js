@@ -89,7 +89,8 @@ export type VectorSourceSpecification = {
 }
 
 export type VectorSourceRequestSpecification = {
-    "dataset"?: string
+    "dataset"?: string,
+    "otherdata"?: string,
 }
 
 export type RasterSourceSpecification = {
