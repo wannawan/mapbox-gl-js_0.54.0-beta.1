@@ -90,7 +90,13 @@ export type VectorSourceSpecification = {
     "maxzoom"?: number,
     "attribution"?: string,
     "promoteId"?: PromoteIdSpecification,
-    "volatile"?: boolean
+    "volatile"?: boolean,
+    "requestdata"?: VectorSourceRequestSpecification
+}
+
+export type VectorSourceRequestSpecification = {
+    "dataset"?: string,
+    "otherdata"?: string,
 }
 
 export type RasterSourceSpecification = {

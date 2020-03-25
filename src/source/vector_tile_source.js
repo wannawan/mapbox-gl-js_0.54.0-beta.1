@@ -17,7 +17,7 @@ import type Dispatcher from '../util/dispatcher';
 import type Tile from './tile';
 import type {Callback} from '../types/callback';
 import type {Cancelable} from '../types/cancelable';
-import type {VectorSourceSpecification, PromoteIdSpecification} from '../style-spec/types';
+import type {VectorSourceSpecification, PromoteIdSpecification, VectorSourceRequestSpecification} from '../style-spec/types';
 
 /**
  * A source containing vector tiles in [Mapbox Vector Tile format](https://docs.mapbox.com/vector-tiles/reference/).
@@ -45,6 +45,21 @@ import type {VectorSourceSpecification, PromoteIdSpecification} from '../style-s
  * @see [Add a vector tile source](https://docs.mapbox.com/mapbox-gl-js/example/vector-source/)
  * @see [Add a third party vector tile source](https://docs.mapbox.com/mapbox-gl-js/example/third-party/)
  */
+
+class RequestData {
+     dataset: ?string;
+     otherdata: ?string;
+
+     constructor(option: VectorSourceRequestSpecification) {
+        this.dataset = option.dataset || '';
+        this.otherdata = option.otherdata || '';
+     }
+
+     serializeToObject() {
+         return {"dataset": this.dataset};
+     }
+}
+
 class VectorTileSource extends Evented implements Source {
     type: 'vector';
     id: string;
