@@ -33,7 +33,7 @@
     "gl-matrix": "^3.0.0",
     "grid-index": "^1.1.0",
     "libtess": "^1.2.2",
-    "minimist": "0.0.8",
+    "minimist": "1.2.3",
     "murmurhash-js": "^1.0.0",
     "pbf": "^3.0.5",
     "potpack": "^1.0.1",
