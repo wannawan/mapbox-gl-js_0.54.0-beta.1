@@ -1,5 +1,4 @@
 /rollup/build/
-/dist/
 *.es.js
 /docs/components/api.json
 /docs/pages/dist/
